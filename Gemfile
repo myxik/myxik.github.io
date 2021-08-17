@@ -1,11 +1,12 @@
 source 'https://rubygems.org'
 
-gem 'jekyll'
+#gem 'jekyll'
 
-group :jekyll_plugins do
-  gem "jekyll-sitemap"
-  gem "jekyll-paginate"
-  gem "jemoji"
-end
+#group :jekyll_plugins do
+  #gem "jekyll-sitemap"
+  #gem "jekyll-paginate"
+  #gem "jemoji"
+#end
 
-gem 'webrick'
+#gem 'webrick'
+gem "github-pages", "~> 217", group: :jekyll_plugins
