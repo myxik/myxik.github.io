@@ -1,6 +1,6 @@
 baseURL: "https://myxik.github.io"
 languageCode: "en-us"
-title: "Myxik blog"
+title: "Jimmy Yamazaki about Research"
 theme: "PaperMod"
 menu:
   main:
