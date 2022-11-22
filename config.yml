@@ -1,0 +1,38 @@
+baseURL: "http://example.org/"
+languageCode: "en-us"
+title: "Myxik blog"
+theme: "PaperMod"
+menu:
+  main:
+    - identifier: "about"
+      name: "About Me"
+      url: /about/
+      weight: 10
+    - identifier: "posts"
+      name: "Posts"
+      url: /
+      weight: 20
+
+params:
+  homeInfoParams:
+      Title: Welcome to my blog!
+      Content: My name is Max (Jimmy), I am deep learning engineer with passion in research. Trying to post as much as I can :)
+                                
+  socialIcons: # optional
+      - name: "github"
+        url: "https://github.com/myxik"
+      - name: "telegram"
+        url: "https://t.me/myxik"
+      - name: "linkedin"
+        url: "https://kz.linkedin.com/in/maxim-mametkulov"
+      - name: "email"
+        url: "mailto:myxikpupsik@gmail.com"
+      - name: "twitter"
+        url: "https://twitter.com/dtmyxik"
+
+  # Show params
+  ShowCodeCopyButtons: true
+  ShowPostNavLinks: true
+  ShowShareButtons: true
+  ShareButtons: ["telegram", "twitter", "linkedin"]
+  ShowReadingTime: true
