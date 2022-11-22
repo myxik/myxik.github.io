@@ -10,7 +10,7 @@ menu:
       weight: 10
     - identifier: "posts"
       name: "Posts"
-      url: /
+      url: /posts
       weight: 20
 
 params:
