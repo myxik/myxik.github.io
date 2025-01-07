@@ -7,6 +7,6 @@ author: James Yamazaki
 
 Hi, my name is James Yamazaki.
 
-I love writing code and learning new things. I am a software engineer with machine learning experience.
+I love writing code and learning new things. I am a software engineer in deep learning.
 
 You can read about me on the links provided on the main page.

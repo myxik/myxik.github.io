@@ -1,6 +1,6 @@
 baseURL: "https://myxik.github.io"
 languageCode: "en-us"
-title: "Jimmy Yamazaki about Research"
+title: "Jimmy Yamazaki"
 theme: "PaperMod"
 menu:
   main:
@@ -16,19 +16,15 @@ menu:
 params:
   homeInfoParams:
       Title: Welcome to my blog!
-      Content: My name is Max (Jimmy), I am deep learning engineer with passion in research. Trying to post as much as I can :)
+      Content: My name is James, I am engineer in deep learning. Trying to post as much as I can :)
                                 
   socialIcons: # optional
       - name: "github"
         url: "https://github.com/myxik"
       - name: "telegram"
         url: "https://t.me/myxik"
-      - name: "linkedin"
-        url: "https://kz.linkedin.com/in/maxim-mametkulov"
       - name: "email"
         url: "mailto:myxikpupsik@gmail.com"
-      - name: "twitter"
-        url: "https://twitter.com/dtmyxik"
 
   # Show params
   ShowCodeCopyButtons: true
