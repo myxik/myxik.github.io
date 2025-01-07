@@ -30,5 +30,5 @@ params:
   ShowCodeCopyButtons: true
   ShowPostNavLinks: true
   ShowShareButtons: true
-  ShareButtons: ["telegram", "twitter", "linkedin"]
+  ShareButtons: ["telegram", "twitter"]
   ShowReadingTime: true
