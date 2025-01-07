@@ -1,13 +1,12 @@
 ---
 title: "About author"
-date: 2022-11-05T20:12:30+06:00
+date: 2025-01-07T20:12:30+06:00
 draft: false
-author: Jimmy Yamazaki
+author: James Yamazaki
 ---
 
-Hi, my name is Jimmy (Max), I am a researcher.
+Hi, my name is James Yamazaki.
 
-I have a background in Brain-Computer Interfaces and Drug Discovery, but my main interest lies in
-the field of Reinforcement Learning.
+I love writing code and learning new things. I am a software engineer with machine learning experience.
 
 You can read about me on the links provided on the main page.
