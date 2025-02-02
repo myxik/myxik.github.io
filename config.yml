@@ -32,3 +32,10 @@ params:
   ShowShareButtons: true
   ShareButtons: ["telegram", "twitter"]
   ShowReadingTime: true
+
+  markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    lineNos: true
