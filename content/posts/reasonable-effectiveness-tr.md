@@ -1,6 +1,5 @@
 ---
 title: "Trust Regions in Optimization: From Reinforcement Learning to Beyond"
-date: 2025-02-03
 draft: false
 ---
 
@@ -30,9 +29,9 @@ Trust regions is a region around the point in the optimization space where the a
 
 One of the early algorithms in RL is the REINFORCE (or Vanilla Policy Gradient (VPG)) method introduced by Williams (1992). Its update rule is elegantly simple and intuitive. After an episode, the gradient of the log-probability of the taken actions is scaled by the return, (intuitively it translates to if this action led to a higher return do a bigger step here) leading to the following update equation:
 
-\[
+$$
 \theta_{t+1} = \theta_t + \alpha \, \nabla_\theta \log \pi_\theta(a|s) \, R
-\]
+$$
 
 While REINFORCE is conceptually straightforward, it suffers from high variance and instability in practice. For example, an agent might learn to pass the ball one episode, only to forget it a few episodes later when it learns how to shoot over-adjustsing to new, potentially suboptimal behaviors — a thing that remind me of “goldfish memory.”
 
@@ -42,18 +41,21 @@ To mitigate this instability, Trust Region Policy Optimization (TRPO) was introd
 
 TRPO formalizes its update as follows:
 
-\[
-\begin{aligned}
-\max_{\theta} \quad & \mathbb{E}_{s,a \sim \pi_{\theta_{\text{old}}}} \left[ \frac{\pi_\theta(a|s)}{\pi_{\theta_{\text{old}}}(a|s)} A^{\theta_{\text{old}}}(s,a) \right] \\
-\text{subject to} \quad & \mathbb{E}_{s \sim \pi_{\theta_{\text{old}}}} \left[ D_{\text{KL}}\Big(\pi_{\theta_{\text{old}}}(\cdot|s) \,\|\, \pi_\theta(\cdot|s)\Big) \right] \leq \delta,
-\end{aligned}
-\]
+{{<rawhtml>}}
+$$ \max_{\theta} \mathbb{E}_{s,a \sim \pi_{\theta_{\text{old}}}} \left[ \frac{\pi_\theta(a|s)}{\pi_{\theta_{\text{old}}}(a|s)} A^{\theta_{\text{old}}}(s,a) \right] $$
+
+$$
+\text{subject to} \quad \mathbb{E}_{s \sim \pi_{\theta_{\text{old}}}} \left[ D_{\text{KL}}\Big(\pi_{\theta_{\text{old}}}(\cdot|s) \,\|\, \pi_\theta(\cdot|s)\Big) \right] \leq \delta
+$$
+
+{{</rawhtml>}}
 
 where:
-- \( \pi_\theta(a|s) \) is the policy parameterized by \( \theta \),
-- \( A^{\theta_{\text{old}}}(s,a) \) is the advantage function computed under the old policy,
-- \( D_{\text{KL}}(\cdot\|\cdot) \) denotes the Kullback–Leibler divergence,
-- \( \delta \) is a predefined threshold.
+
+- $\( \pi_\theta(a|s) \)$ is the policy parameterized by $\( \theta \)$,
+- $\( A^{\theta_{\text{old}}}(s,a) \)$ is the advantage function computed under the old policy,
+- $\( D_{\text{KL}}(\cdot\|\cdot) \)$ denotes the Kullback–Leibler divergence,
+- $\( \delta \)$ is a predefined threshold.
 
 By enforcing the KL-divergence constraint, TRPO ensures that each update remains within a “trusted” region of the parameter space, thereby reducing the risk of catastrophic updates (that would make agent less goldfish memorish and more EMERGENT in behaviour)
 
@@ -88,14 +90,14 @@ While TRPO provides a solid theoretical foundation for stable policy updates, it
 
 Proximal Policy Optimization (PPO) by ~~my beloved king~~ Schulman et al is one such method that simplifies TRPO by implementing a clipped surrogate objective that "mimics" the trust region, without explicitly doing it.
 
-\[
+$$
 L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min\Big( r_t(\theta) A_t, \; \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) A_t \Big) \right],
-\]
+$$
 
 where:
-- \( r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} \) is the probability ratio,
-- \( A_t \) is the advantage estimate,
-- \( \epsilon \) is a hyperparameter that determines the clipping range.
+- $\( r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} \)$ is the probability ratio,
+- $\( A_t \)$ is the advantage estimate,
+- $\( \epsilon \)$ is a hyperparameter that determines the clipping range.
 
 ### PPO continued
 
