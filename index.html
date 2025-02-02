@@ -1,177 +1,20 @@
-<!DOCTYPE html>
-<html lang="en" dir="auto">
-
 <head>
-	<meta name="generator" content="Hugo 0.143.0"><meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>Jimmy Yamazaki</title>
-
-<meta name="description" content="">
-<meta name="author" content="">
-<link rel="canonical" href="https://myxik.github.io/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.45e028aa8ce0961349adf411b013ee39406be2c0bc80d4ea3fc04555f7f4611a.css" integrity="sha256-ReAoqozglhNJrfQRsBPuOUBr4sC8gNTqP8BFVff0YRo=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://myxik.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://myxik.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://myxik.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://myxik.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://myxik.github.io/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://myxik.github.io/index.xml">
-<link rel="alternate" hreflang="en" href="https://myxik.github.io/">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
-
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --code-block-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
-
-            .list {
-                background: var(--theme);
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
-
-    </style>
-</noscript><meta property="og:url" content="https://myxik.github.io/">
-  <meta property="og:site_name" content="Jimmy Yamazaki">
-  <meta property="og:title" content="Jimmy Yamazaki">
-  <meta property="og:locale" content="en-us">
-  <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jimmy Yamazaki">
-<meta name="twitter:description" content="">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Jimmy Yamazaki",
-  "url": "https://myxik.github.io/",
-  "description": "",
-  "logo": "https://myxik.github.io/favicon.ico",
-  "sameAs": [
-      
-  ]
-}
-</script>
-</head>
-
-<body class="list" id="top">
+	<meta name="generator" content="Hugo 0.143.0">
+  ...
+  
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
-
+  MathJax = {
+    tex: {
+      displayMath: [['\\[', '\\]'], ['$$', '$$']],  
+      inlineMath: [['\\(', '\\)']]                  
+    },
+    loader:{
+      load: ['ui/safe']
+    },
+  };
 </script>
 
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="https://myxik.github.io/" accesskey="h" title="Jimmy Yamazaki (Alt + H)">Jimmy Yamazaki</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-            <li>
-                <a href="https://myxik.github.io/about/" title="About Me">
-                    <span>About Me</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://myxik.github.io/posts" title="Posts">
-                    <span>Posts</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main class="main"> 
-
-<article class="first-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Struggle with OCD and general anxiety
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>My Journey with OCD and Anxiety This is my personal account of living with OCD (Obsessive-Compulsive Disorder) and general anxiety. My goal in sharing this is twofold: to help those who may not believe in mental illnesses understand the struggle, and to encourage others battling similar issues to seek help.
-The Beginning of My Struggle Since May 2023, I’ve been grappling with OCD and health anxiety. It started with an irrational fear of rabies. A year prior, while visiting my wife’s family, I played with a puppy that later died. I became fixated on the idea that it had bitten me and given me rabies, lying dormant in me. The fear spiraled out of control.
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-01-07 20:12:30 +0600 +0600'>January 7, 2025</span></footer>
-  <a class="entry-link" aria-label="post link to Struggle with OCD and general anxiety" href="https://myxik.github.io/posts/struggle/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Trust Regions in Optimization: From Reinforcement Learning to Beyond
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p> In deep learning and reinforcement learning (RL), optimization is at the heart of progress. While many of us simply call optimizer.step() in our training scripts, there lies a rich world of ideas and techniques that can improve both the stability and performance of our models. In this article, we dive into the concept of trust regions in optimization, examine how they helped overcome issues in RL, discuss their applications in other areas, and speculate on why renewed interest in these methods might be on the horizon with the rise in available compute.
-...</p>
-  </div>
-  <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Trust Regions in Optimization: From Reinforcement Learning to Beyond" href="https://myxik.github.io/posts/reasonable-effectiveness-tr/"></a>
-</article>
-    </main>
-    <script>
-    window.MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']]
-        }
-    };
-</script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-</body>
-
-</html>
+  
+  ...
+</head>
