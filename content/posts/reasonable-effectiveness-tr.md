@@ -1,6 +1,7 @@
 ---
-title: "Trust Regions in Optimization: From Reinforcement Learning to Beyond"
+title: "Reasonable effectiveness of Trust Regions"
 draft: false
+date: 2025-02-15
 ---
 
 # 
