@@ -6,8 +6,29 @@
     <description>Recent content in Posts on Jimmy Yamazaki</description>
     <generator>Hugo -- 0.143.0</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 07 Jan 2025 20:12:30 +0600</lastBuildDate>
+    <lastBuildDate>Sat, 22 Feb 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://myxik.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Measure-Theoretic View of Policy Gradients</title>
+      <link>https://myxik.github.io/posts/measure-theoretic-view/</link>
+      <pubDate>Sat, 22 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://myxik.github.io/posts/measure-theoretic-view/</guid>
+      <description>&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
+&lt;h2 id=&#34;why-a-measure-theoretic-view-of-policy-gradients&#34;&gt;Why a Measure-Theoretic View of Policy Gradients?&lt;/h2&gt;
+&lt;p&gt;Reinforcement learning (RL) has &lt;del&gt;long&lt;/del&gt; always relied on probability densities and likelihood ratios to compute policy gradients. The standard derivation comes to this conclusion:&lt;/p&gt;
+&lt;p&gt;$$
+\nabla_\theta J(\pi_\theta) = \mathbb{E} \left[ R \nabla_\theta \log \pi_\theta(a | s) \right]
+$$&lt;/p&gt;
+&lt;p&gt;where $J(\pi_\theta)$ is the objective function (e.g. expected reward), $\pi_\theta$ is the policy, $R$ is the reward, and $\nabla_\theta \log \pi_\theta(a | s)$ is the gradient of the log policy. Basically what we covered previously.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Reasonable effectiveness of Trust Regions</title>
+      <link>https://myxik.github.io/posts/reasonable-effectiveness-tr/</link>
+      <pubDate>Sat, 15 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://myxik.github.io/posts/reasonable-effectiveness-tr/</guid>
+      <description>&lt;h1 id=&#34;heading&#34;&gt;&lt;/h1&gt;
+&lt;p&gt;In deep learning and reinforcement learning (RL), optimization is at the heart of progress. While many of us simply call &lt;code&gt;optimizer.step()&lt;/code&gt; in our training scripts, there lies a rich world of ideas and techniques that can improve both the stability and performance of our models. In this article, we dive into the concept of &lt;strong&gt;trust regions&lt;/strong&gt; in optimization, examine how they helped overcome issues in RL, discuss their applications in other areas, and speculate on why renewed interest in these methods might be on the horizon with the rise in available compute.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Struggle with OCD and general anxiety</title>
       <link>https://myxik.github.io/posts/struggle/</link>
@@ -17,14 +38,6 @@
 &lt;p&gt;This is my personal account of living with OCD (Obsessive-Compulsive Disorder) and general anxiety. My goal in sharing this is twofold: to help those who may not believe in mental illnesses understand the struggle, and to encourage others battling similar issues to seek help.&lt;/p&gt;
 &lt;h3 id=&#34;the-beginning-of-my-struggle&#34;&gt;The Beginning of My Struggle&lt;/h3&gt;
 &lt;p&gt;Since May 2023, I&amp;rsquo;ve been grappling with OCD and health anxiety. It started with an irrational fear of rabies. A year prior, while visiting my wife&amp;rsquo;s family, I played with a puppy that later died. I became fixated on the idea that it had bitten me and given me rabies, lying dormant in me. The fear spiraled out of control.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Trust Regions in Optimization: From Reinforcement Learning to Beyond</title>
-      <link>https://myxik.github.io/posts/reasonable-effectiveness-tr/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://myxik.github.io/posts/reasonable-effectiveness-tr/</guid>
-      <description>&lt;h1 id=&#34;heading&#34;&gt;&lt;/h1&gt;
-&lt;p&gt;In deep learning and reinforcement learning (RL), optimization is at the heart of progress. While many of us simply call &lt;code&gt;optimizer.step()&lt;/code&gt; in our training scripts, there lies a rich world of ideas and techniques that can improve both the stability and performance of our models. In this article, we dive into the concept of &lt;strong&gt;trust regions&lt;/strong&gt; in optimization, examine how they helped overcome issues in RL, discuss their applications in other areas, and speculate on why renewed interest in these methods might be on the horizon with the rise in available compute.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

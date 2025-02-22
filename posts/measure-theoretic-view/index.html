@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Measure-Theoretic View of Policy Gradients | Jimmy Yamazaki</title>
+<meta name="keywords" content="">
+<meta name="description" content="Introduction
+Why a Measure-Theoretic View of Policy Gradients?
+Reinforcement learning (RL) has long always relied on probability densities and likelihood ratios to compute policy gradients. The standard derivation comes to this conclusion:
+$$
+\nabla_\theta J(\pi_\theta) = \mathbb{E} \left[ R \nabla_\theta \log \pi_\theta(a | s) \right]
+$$
+where $J(\pi_\theta)$ is the objective function (e.g. expected reward), $\pi_\theta$ is the policy, $R$ is the reward, and $\nabla_\theta \log \pi_\theta(a | s)$ is the gradient of the log policy. Basically what we covered previously.">
+<meta name="author" content="">
+<link rel="canonical" href="https://myxik.github.io/posts/measure-theoretic-view/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.45e028aa8ce0961349adf411b013ee39406be2c0bc80d4ea3fc04555f7f4611a.css" integrity="sha256-ReAoqozglhNJrfQRsBPuOUBr4sC8gNTqP8BFVff0YRo=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://myxik.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://myxik.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://myxik.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://myxik.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://myxik.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://myxik.github.io/posts/measure-theoretic-view/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://myxik.github.io/posts/measure-theoretic-view/">
+  <meta property="og:site_name" content="Jimmy Yamazaki">
+  <meta property="og:title" content="Measure-Theoretic View of Policy Gradients">
+  <meta property="og:description" content="Introduction Why a Measure-Theoretic View of Policy Gradients? Reinforcement learning (RL) has long always relied on probability densities and likelihood ratios to compute policy gradients. The standard derivation comes to this conclusion:
+$$ \nabla_\theta J(\pi_\theta) = \mathbb{E} \left[ R \nabla_\theta \log \pi_\theta(a | s) \right] $$
+where $J(\pi_\theta)$ is the objective function (e.g. expected reward), $\pi_\theta$ is the policy, $R$ is the reward, and $\nabla_\theta \log \pi_\theta(a | s)$ is the gradient of the log policy. Basically what we covered previously.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-02-22T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-02-22T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Measure-Theoretic View of Policy Gradients">
+<meta name="twitter:description" content="Introduction
+Why a Measure-Theoretic View of Policy Gradients?
+Reinforcement learning (RL) has long always relied on probability densities and likelihood ratios to compute policy gradients. The standard derivation comes to this conclusion:
+$$
+\nabla_\theta J(\pi_\theta) = \mathbb{E} \left[ R \nabla_\theta \log \pi_\theta(a | s) \right]
+$$
+where $J(\pi_\theta)$ is the objective function (e.g. expected reward), $\pi_\theta$ is the policy, $R$ is the reward, and $\nabla_\theta \log \pi_\theta(a | s)$ is the gradient of the log policy. Basically what we covered previously.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://myxik.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Measure-Theoretic View of Policy Gradients",
+      "item": "https://myxik.github.io/posts/measure-theoretic-view/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Measure-Theoretic View of Policy Gradients",
+  "name": "Measure-Theoretic View of Policy Gradients",
+  "description": "Introduction Why a Measure-Theoretic View of Policy Gradients? Reinforcement learning (RL) has long always relied on probability densities and likelihood ratios to compute policy gradients. The standard derivation comes to this conclusion:\n$$ \\nabla_\\theta J(\\pi_\\theta) = \\mathbb{E} \\left[ R \\nabla_\\theta \\log \\pi_\\theta(a | s) \\right] $$\nwhere $J(\\pi_\\theta)$ is the objective function (e.g. expected reward), $\\pi_\\theta$ is the policy, $R$ is the reward, and $\\nabla_\\theta \\log \\pi_\\theta(a | s)$ is the gradient of the log policy. Basically what we covered previously.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "Introduction Why a Measure-Theoretic View of Policy Gradients? Reinforcement learning (RL) has long always relied on probability densities and likelihood ratios to compute policy gradients. The standard derivation comes to this conclusion:\n$$ \\nabla_\\theta J(\\pi_\\theta) = \\mathbb{E} \\left[ R \\nabla_\\theta \\log \\pi_\\theta(a | s) \\right] $$\nwhere $J(\\pi_\\theta)$ is the objective function (e.g. expected reward), $\\pi_\\theta$ is the policy, $R$ is the reward, and $\\nabla_\\theta \\log \\pi_\\theta(a | s)$ is the gradient of the log policy. Basically what we covered previously.\nThis formulation, while widely used, assumes that policies have well-defined probability density functions. However, this assumption breaks down in several cases:\nContinuous action spaces: Not all policies over continuous actions admit densities (e.g. Gaussian policies, almost all of Mujoco envs) Entropy-regularized RL: Some regularization schemes (entropy based) implicitly modify policies in ways that make densities hard to define Optimal transport and Wasserstein-based methods: Probability mass shifts are more naturally expressed in terms of measures rather than densities (This is just to express RL in a new light, to draw more inspiration from other fields) but ultimately, I believe almost all of DL is just optimal transport\nBy moving to a measure-theoretic view, we unlock a more general perspective on policy optimization — one that applies even when probability densities do not exist or are inconvenient to work with. This shift is not just a theoretical exercise, but has practical implications for algorithm design (mainly), stability, and efficiency. By shifting this view, we can explore RL in a broader way and just see on whether we can apply some tips and tricks\nIn this blog, I will try to explain the measure-theoretic view of policy gradients in a way that is accessible to RL practitioners. I will introduce key concepts as needed, and provide references to more detailed resources for those who want to delve deeper, but this blog is not written by a mathematician and I do not claim to be one, so any FEEDBACK or CRITICISM is welcome, but please be gentle I have a fragile ego and OCD.\nI assume familiarity with:\nBasic reinforcement learning (Markov decision processes, policy gradients) Probability theory (expectations, probability distributions) Calculus and linear algebra But even if you don’t have any of these, I hope you can still enjoy the blog and learn something new.\nI do not assume prior knowledge of measure theory (in fact, I assume and hope at the opposite), and I will try to introduce key concepts as needed.\nWhat are we gonna do in this blog? Measure-Theoretic Setup for Policies A brief primer on measure theory (I promise it’s not as scary as it sounds) How policies can be viewed as probability measures rather than functions (Trust me, it is worth it) The concept of occupancy measures, which describe how policies interact with the environment (Not simple, but effective drop-in replacement for trajectories) Policy Gradients via the Radon-Nikodym Derivative The limitations of traditional policy gradient methods How the Radon-Nikodym derivative provides a more general formulation What this means for RL optimization and algorithm design Policy Optimization and Convex Analysis Reformulating RL objectives using integrals over measures How this leads to convex formulations of policy optimization The role of regularization and KL-divergence in measure space Measure-Theoretic Setup for Policies A brief primer on measure theory Reinforcement learning (RL) is a probabilistic framework, but it is often presented using probability densities — functions like $\\pi(a|s)$ that describe how an agent selects actions, we just “predict” actions giving the state, meaning that we are likely to take action $a$ given state $s$. This is a convenient, but restrictive viewpoint, because not all policies are that beautiful and nice. Policies can be deterministic, discrete-continuous hybrid, etc. So, we gotta have a more general view of policies\nSo, the motivation is to generalize policy and its gradients beyond explicit density assumptions and even step down from the probabilistic approach and ascend to the measure theoretic view\nBefore we define policies in this new way, we need to establish some fundamental concepts in measure theory, ones who are familiar with measure theory can skip this section (and entire blog, if you are toxic).\nSigma-Algebras A sigma-algebra ($\\sigma$-algebra) is formally just a set with some properties. Formally, it satisfies three properties:\nContains the entire space: If we’re measuring actions in $\\mathcal{A}$ , then the full space $\\mathcal{A}$ must be included Closed under complements: If a subset $A$ is in it, so is its complement $A^c$ Closed under countable unions: If $A_1, A_2, \\dots$ are in it, then their union is also in it Some small example:\nBorel $\\sigma$-algebra: The smallest $\\sigma$-algebra containing all open sets in a space Ensures we can assign probabilities to intervals, discrete actions, and mixtures Measures A measure assigns a “size” (or probability, in a more intuitive and example sense) to subsets of a space in a consistent way. A measure $\\mu$ on a $\\sigma$-algebra $\\mathcal{F}$ is defined as a function:\n$$ \\mu: \\mathcal{F} \\to [0, \\infty] $$\nthat satisfies:\nThe empty set has measure zero: $\\mu(\\emptyset) = 0$ Countable additivity: If $A_1, A_2, \\dots$ are disjoint measurable sets, then: $$ \\mu\\left(\\bigcup_{i=1}^{\\infty} A_i\\right) = \\sum_{i=1}^{\\infty} \\mu(A_i). $$\nIntuitively, one measure is just length or area or volume, etc. It just shows how to “measure” the size of a set\nA measure is a probability measure if $\\mu(\\mathcal{A}) = 1$, ensuring that probabilities sum to one\nThe Radon-Nikodym Derivative The Radon-Nikodym derivative generalizes the concept of probability densities. Given two measures $\\mu$ and $\\nu$, if $\\mu$ is absolutely continuous with respect to $\\nu$ (denoted $\\mu \\ll \\nu$), there exists a function $f$ such that:\n$$ \\mu(A) = \\int_A f d\\nu $$\nfor all measurable sets $A$. This function $f$ is called the Radon-Nikodym derivative, written as:\n$$ \\frac{d\\mu}{d\\nu} $$\nIf you dont get it now, dont worry you will get it later. (I always dreamt of writing this sentence in a blog. Thank you, Andrew Ng senpai)\nHow policies can be viewed as probability measures rather than functions A probability measure $\\pi$ is a function that “assigns probabilities” to subsets of the action space. Instead of defining a density function $\\pi(a | s)$, we define $\\pi$ as a probability measure (be cautious as I use the same notation for both the policy and the probability measure):\n$$ \\pi(s, A) = \\int_A \\pi(s, da) $$\nwhere:\n$A$ is a measurable subset of the action space $\\mathcal{A}$ $\\pi(s, A)$ represents the probability of selecting an action within $A$ given state $s$ I can already sense a question: “Why the hell are you doing this? What is the benefit of this?”\nWell, as we have discussed previously, this is to generalize the policy and its gradients beyond density. We will use it later to reformulate the policy gradient theorem in a more general way. (but overall I get that this blog feels like an overkill to an understanding, but in general its just a way to generalize the mathematical view)\nWe will also note about Markov kernel, which is also related to the policy, as a matter of fact, policy is a Markov kernel:\n$$ \\pi: S \\times \\mathcal{F}(\\mathcal{A}) \\to [0,1] $$\nwhere:\n$S$ is the state space. $\\mathcal{F}(\\mathcal{A})$ is the $\\sigma$-algebra over the action space. $\\pi(s, A)$ gives the probability of selecting an action in $A$ given state $s$ Why? Just to list all the properties of the policy in a more rigorous (I know how much math guys love this word) way.\nThe concept of occupancy measures, which describe how policies interact with the environment In RL, especially in policy gradients, we frequently encounter formulation of a trajectory (well because we actually need to converge to an optimal policy). Instead of tracking individual trajectories, we often need a global measure of how often a policy visits different state-action pairs, this can be as expressive as just a bunch of collected trajectories. This is where occupancy measures come in\nAn occupancy measure provides a probability distribution over state-action pairs under a given policy. Instead of working with sampled transitions, we define a stationary distribution that captures long-term visitation frequencies. This concept allows us to reformulate quite a lot of objectives in RL in a more general way using not some Monte Carlo sampled trajectories, but some precise visitation frequencies\nPolicy Gradients via the Radon-Nikodym Derivative Derivation of policy gradients using the Radon-Nikodym derivative We will start with a recap of the policy gradient theorem, as it is the foundation of the policy gradient methods.\nThe goal in RL is to maximize the expected return:\n$$ J(\\theta) = \\mathbb{E}_{\\tau \\sim \\pi_{\\theta}} [R(\\tau)] $$ where:\n$\\tau = (s_0, a_0, s_1, a_1, \\dots)$ is a trajectory $R(\\tau)$ is the return (e.g. cumulative (discounted or not) reward) $\\pi_\\theta$ is the policy parameterized by $\\theta$ Using the gradient of an expectation, we try to find the gradient of the objective:\n$$ \\nabla_\\theta J(\\theta) = \\nabla_\\theta \\mathbb{E}_{\\tau \\sim \\pi_{\\theta}} [R(\\tau)] $$ from where we can derive the gradient of the objective:\n$$ \\nabla_\\theta J(\\theta) = \\int \\nabla_\\theta p_\\theta(\\tau) R(\\tau) d\\tau. $$ where $p_\\theta(\\tau)$ is the probability density of trajectory $\\tau$ under the policy $\\pi_\\theta$ obviously\nNow we use the identity, which is just a log derivative:\n$$ \\nabla_\\theta p_\\theta(\\tau) = p_\\theta(\\tau) \\nabla_\\theta \\log p_\\theta(\\tau), $$ which gives:\n$$ \\nabla_\\theta J(\\theta) = \\int p_\\theta(\\tau) \\nabla_\\theta \\log p_\\theta(\\tau) R(\\tau) d\\tau. $$ Rewriting as an expectation:\n$$ \\nabla_\\theta J(\\theta) = \\mathbb{E}_{\\tau \\sim \\pi_{\\theta}} \\left[ \\nabla_\\theta \\log p_\\theta(\\tau) R(\\tau) \\right]. $$ This is the classic policy gradient theorem, then we can rewrite simple $p_\\theta(\\tau)$ with policy and thats basically it\nSo what for do we need Radon-Nikodym derivative? Well, we missed it. Lets CIRCLE BACK to log derivative trick and see something new there\nThe log-derivative trick:\n$$ \\nabla_\\theta p_\\theta(\\tau) = p_\\theta(\\tau) \\nabla_\\theta \\log p_\\theta(\\tau) $$ In fact, it can be seen as a special case of the Radon-Nikodym derivative when considering an infinitesimally small perturbation of $\\theta$ (remember we are trying to change the policy from some base $\\theta_0$ to some optimal $\\theta{\\prime}$). Essentially, the policy gradient theorem can be thought of as an application of the Radon-Nikodym derivative, where instead of changing the entire measure, we take the derivative of the density function directly, but first some preliminary.\nThis is why the policy gradient theorem can be rewritten as:\n$$ \\nabla_\\theta J(\\theta) = \\mathbb{E}_{\\tau \\sim \\mathbb{P}_\\theta} \\left[ \\nabla_\\theta \\log \\frac{d\\mathbb{P}_\\theta}{d\\mathbb{P}_{\\theta{\\prime}}} R(\\tau) \\right] $$ I know that this feels out of the blue, but lets just recap quickly the intuition of Radon-Nikodym derivative:\nIt shows us how one measure (in our case $\\mathbb{P}\\theta$) changes with respect to another measure (in our case $\\mathbb{P}{\\theta{\\prime}}$), (sorry for notation, I somehow cannot fix MathJax here and ChatGPT cant help either, but you understand its underscript). Formally it looks something like this:\n$$ d\\mathbb{P}_\\theta = p(\\tau) d\\mathbb{P}_{\\theta{\\prime}}(\\tau) $$ Looks better now? I guess, so! but still what it means and why? Now what? Now, that we now that it is just a special case of Radon-Nikodym theorem we can retract the assumptions under which it works (hint: it works only with infinitesmall change of $\\theta$ - differential), but are we on practice having this infinitesmall changes? The answer is NO! that is why my glorious and precious kingSchulman et al. and Sham Kakade (and other guys not to be offensive) invented upgrades to Policy Gradients such as TRPO (go where its infinitesmall enough), Natural Gradients, and so on. Even if we look at modern PPO clipped objective we can see that it resembles our Radon-Nikodyme derivative quite closely.\nOK, enough with yapping, but we still can arrive back at our policy gradient using just the assumption and we are back at it:\n$$ \\nabla_\\theta J(\\theta) = \\mathbb{E}{\\tau \\sim \\pi{\\theta}} \\left[ \\nabla_\\theta \\log p_\\theta(\\tau) R(\\tau) \\right] $$ Occupancy measures to the fight! Instead of reasoning directly over trajectory distributions $p_\\theta(\\tau)$, we can shift our perspective to state-action occupancy measures (yes, the ones introduced before). Lets write it formally:\n$$ d^\\pi(s, a) = \\sum_{t=0}^{\\infty} \\gamma^t P(s_t=s, a_t=a | \\pi) $$ where $P(s_t=s, a_t=a | \\pi)$ is the probability of visiting $(s, a)$ at time $t$ under policy $\\pi$. This occupancy measure defines a stationary distribution over state-action pairs (yeah, as always). Since we are now working only with occupancy measures, we will try to drop in the replacement in our policy gradient theorem:\nFirst, we will unroll what is $p_\\theta(\\tau)$ actually is:\n$$ p_\\theta(\\tau) = p(s_0) \\prod_{t=0}^{T} \\pi_\\theta(a_t | s_t) P(s_{t+1} | s_t, a_t) $$ By doing this, we can actually find this relation to be true:\n$$ \\mathbb{E}_{\\tau \\sim p\\theta} \\left[ \\sum_{t=0}^{T} f(s_t, a_t) \\right] = \\sum_{t=0}^{T} \\sum_{s, a} P(s_t = s, a_t = a | \\pi) f(s, a) = \\sum_{s, a} d^\\pi(s, a) f(s, a) $$ You probably are asking now, why sums over $f(s_t, a_t)$ well, that is because these are our sampled trajectories, we just unrolled them\nPolicy Optimization and Convex Analysis Now that we have discovered (and used!) some of the most brutal and vicious and most ruthless more broad formalism, we can actually broaden up other things in RL right?\nReformulating RL Objectives Using Integrals Over Measures The standard RL objective is get the most bitches get the most discounted cumulative reward (return):\n$$ J(\\pi) = \\mathbb{E} \\left[ \\sum_{t=0}^{\\infty} \\gamma^t r(s_t, a_t) \\right] $$ Instead of summing over trajectories, we rewrite it using occupancy measures:\n$$ J(\\pi) = \\int_{\\mathcal{S} \\times \\mathcal{A}} d^\\pi(s, a) r(s, a) $$ see, its easy? If we read this integral in a natural way we would say “sum up all the occupied state-action pairs weighted by the reward of state-action”\nThis is important for many things:\nThis allows for us to use some variational magic here (hello bayesian RL) occupancy measure is guaranteed that it is consistent with Markov transition dynamics RL becomes just a convex optimization linear program problem (only tabular ofc, but still something!) Why Is Convexity Useful? As mentioned before, RL can just become a convex optimization problem which eliminates a lot of troubles. Lets take an example here:\nInstead of optimizing over a non-convex space of policies $\\pi$, we optimize over the convex set of occupancy measures:\n$$ \\max_{d^\\pi} \\int_{\\mathcal{S} \\times \\mathcal{A}} d^\\pi(s, a) r(s, a) $$ Of course with respect to:\nStationarity - other way round occupancy measure breaks Normalization - other way round probability breaks and this opens a brand new world for gradient methods and we can just optimize over measures, it is explicitly used in TRPO written by my glorious king Schulman et al.\nRegularization and KL Regularization in measure theoretic interpretation becomes way more justified and even kinda intuitive rather then just a pure hack. We will cover a case of KL divergence as it is frequently used as a REGULARIZER in RL\n$$ D_{\\text{KL}}(\\pi || \\pi_0) = \\int_{\\mathcal{S} \\times \\mathcal{A}} d^\\pi(s, a) \\log \\frac{d^\\pi(s, a)}{d^{\\pi_0}(s, a)} $$ (dont worry this is just KL written in our already familiar terms)\nWhat we are doing here? a lot of things actually:\nwe balance explore-exploit problem - by addressing closeness to prior policy we encourage smooth updates - by preventing HUGE steps in divergence we encourage capitalism We dont Conclusion Through a measure-theoretic perspective, we have uncovered a broader and more principled way to understand policy gradients, moving beyond the limitations of density-based formulations. By viewing policies as probability measures and leveraging tools like the Radon-Nikodym derivative, we gain a more flexible framework that naturally extends to cases where densities may not be well-defined. (yeah it was written by ChatGPT)\nBy actually examining how Radon-Nikodym derivative and occupancy measures are used we can leverage more INSIGHTS into interesting directions in RL. We can see RL from another angle. Our skin becomes clearer. We actually can gain theoretical information on why something works and something is not without just relying on set of hacks (its just beautiful, but I still am dumb enough to actually derive it)\nIn essence, measure-theoretic RL is not just a mathematical abstraction — it has direct practical implications, that already influenced algorithm design (as examples we have taken TRPO, natural gradients and KL-regularized methods) and improving stability in policy optimization. By ascending stepping beyond conventional probability densities, we allow ourselves to see reinforcement learning through a different lens — one that may ultimately lead to more robust, efficient, (yeah calculate hessian or fisher matrix, I will wait) and theoretically grounded methods\n",
+  "wordCount" : "2714",
+  "inLanguage": "en",
+  "datePublished": "2025-02-22T00:00:00Z",
+  "dateModified": "2025-02-22T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://myxik.github.io/posts/measure-theoretic-view/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Jimmy Yamazaki",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://myxik.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://myxik.github.io/" accesskey="h" title="Jimmy Yamazaki (Alt + H)">Jimmy Yamazaki</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://myxik.github.io/about/" title="About Me">
+                    <span>About Me</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://myxik.github.io/posts" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Measure-Theoretic View of Policy Gradients
+    </h1>
+    <div class="post-meta"><span title='2025-02-22 00:00:00 +0000 UTC'>February 22, 2025</span>&nbsp;·&nbsp;13 min
+
+</div>
+  </header> 
+  <div class="post-content"><h1 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h1>
+<h2 id="why-a-measure-theoretic-view-of-policy-gradients">Why a Measure-Theoretic View of Policy Gradients?<a hidden class="anchor" aria-hidden="true" href="#why-a-measure-theoretic-view-of-policy-gradients">#</a></h2>
+<p>Reinforcement learning (RL) has <del>long</del> always relied on probability densities and likelihood ratios to compute policy gradients. The standard derivation comes to this conclusion:</p>
+<p>$$
+\nabla_\theta J(\pi_\theta) = \mathbb{E} \left[ R \nabla_\theta \log \pi_\theta(a | s) \right]
+$$</p>
+<p>where $J(\pi_\theta)$ is the objective function (e.g. expected reward), $\pi_\theta$ is the policy, $R$ is the reward, and $\nabla_\theta \log \pi_\theta(a | s)$ is the gradient of the log policy. Basically what we covered previously.</p>
+<p>This formulation, while widely used, assumes that policies have well-defined probability density functions. However, this assumption breaks down in several cases:</p>
+<ul>
+<li>Continuous action spaces: Not all policies over continuous actions admit densities (e.g. Gaussian policies, almost all of Mujoco envs)</li>
+<li>Entropy-regularized RL: Some regularization schemes (entropy based) implicitly modify policies in ways that make densities hard to define</li>
+<li>Optimal transport and Wasserstein-based methods: Probability mass shifts are more naturally expressed in terms of measures rather than densities (This is just to express RL in a new light, to draw more inspiration from other fields)</li>
+</ul>
+<p><del>but ultimately, I believe almost all of DL is just optimal transport</del></p>
+<p>By moving to a measure-theoretic view, we unlock a more general perspective on policy optimization — one that applies even when probability densities do not exist or are inconvenient to work with. This shift is not just a theoretical exercise, but has practical implications for algorithm design (mainly), stability, and <del>efficiency</del>. By shifting this view, we can explore RL in a broader way and just see on whether we can apply some tips and tricks</p>
+<p>In this blog, I will try to explain the measure-theoretic view of policy gradients in a way that is accessible to RL practitioners. I will introduce key concepts as needed, and provide references to more detailed resources for those who want to delve deeper, but this blog is not written by a mathematician and I do not claim to be one, so any FEEDBACK or CRITICISM is welcome, but please be gentle I have a fragile ego and OCD.</p>
+<p>I assume familiarity with:</p>
+<ul>
+<li>Basic reinforcement learning (Markov decision processes, policy gradients)</li>
+<li>Probability theory (expectations, probability distributions)</li>
+<li>Calculus and linear algebra</li>
+</ul>
+<p>But even if you don&rsquo;t have any of these, I hope you can still enjoy the blog and learn something new.</p>
+<p>I do not assume prior knowledge of measure theory (in fact, I assume and hope at the opposite), and I will try to introduce key concepts as needed.</p>
+<h2 id="what-are-we-gonna-do-in-this-blog">What are we gonna do in this blog?<a hidden class="anchor" aria-hidden="true" href="#what-are-we-gonna-do-in-this-blog">#</a></h2>
+<ol>
+<li>Measure-Theoretic Setup for Policies</li>
+</ol>
+<ul>
+<li>A brief primer on measure theory (I promise it&rsquo;s not as scary as it sounds)</li>
+<li>How policies can be viewed as probability measures rather than functions (Trust me, it is worth it)</li>
+<li>The concept of occupancy measures, which describe how policies interact with the environment (Not simple, but effective drop-in replacement for trajectories)</li>
+</ul>
+<ol start="2">
+<li>Policy Gradients via the Radon-Nikodym Derivative</li>
+</ol>
+<ul>
+<li>The limitations of traditional policy gradient methods</li>
+<li>How the Radon-Nikodym derivative provides a more general formulation</li>
+<li>What this means for RL optimization and algorithm design</li>
+</ul>
+<ol start="3">
+<li>Policy Optimization and Convex Analysis</li>
+</ol>
+<ul>
+<li>Reformulating RL objectives using integrals over measures</li>
+<li>How this leads to convex formulations of policy optimization</li>
+<li>The role of regularization and KL-divergence in measure space</li>
+</ul>
+<h1 id="measure-theoretic-setup-for-policies">Measure-Theoretic Setup for Policies<a hidden class="anchor" aria-hidden="true" href="#measure-theoretic-setup-for-policies">#</a></h1>
+<h2 id="a-brief-primer-on-measure-theory">A brief primer on measure theory<a hidden class="anchor" aria-hidden="true" href="#a-brief-primer-on-measure-theory">#</a></h2>
+<p>Reinforcement learning (RL) is a probabilistic framework, but it is often presented using probability densities — functions like  $\pi(a|s)$  that describe how an agent selects actions, we just &ldquo;predict&rdquo; actions giving the state, meaning that we are likely to take action $a$ given state $s$. This is a convenient, but restrictive viewpoint, because not all policies are that beautiful and nice. Policies can be deterministic, discrete-continuous hybrid, etc. So, we gotta have a more general view of policies</p>
+<p>So, the motivation is to generalize policy and its gradients beyond explicit density assumptions and even step down from the probabilistic approach and <!-- raw HTML omitted -->ascend<!-- raw HTML omitted --> to the measure theoretic view</p>
+<p>Before we define policies in this new way, we need to establish some fundamental concepts in measure theory, ones who are familiar with measure theory can skip this section (and entire blog, if you are toxic).</p>
+<h3 id="sigma-algebras">Sigma-Algebras<a hidden class="anchor" aria-hidden="true" href="#sigma-algebras">#</a></h3>
+<p>A sigma-algebra ($\sigma$-algebra) is formally just a set with some properties. Formally, it satisfies three properties:</p>
+<ol>
+<li>Contains the entire space: If we’re measuring actions in  $\mathcal{A}$ , then the full space  $\mathcal{A}$  must be included</li>
+<li>Closed under complements: If a subset  $A$  is in it, so is its complement  $A^c$</li>
+<li>Closed under countable unions: If  $A_1, A_2, \dots$  are in it, then their union is also in it</li>
+</ol>
+<p>Some small example:</p>
+<ul>
+<li>Borel $\sigma$-algebra:
+<ul>
+<li>The smallest $\sigma$-algebra containing all open sets in a space</li>
+<li>Ensures we can assign probabilities to intervals, discrete actions, and mixtures</li>
+</ul>
+</li>
+</ul>
+<h3 id="measures">Measures<a hidden class="anchor" aria-hidden="true" href="#measures">#</a></h3>
+<p>A measure assigns a “size” (or probability, in a more intuitive and example sense) to subsets of a space in a consistent way. A measure $\mu$ on a $\sigma$-algebra $\mathcal{F}$ is defined as a function:</p>
+<p>$$
+\mu: \mathcal{F} \to [0, \infty]
+$$</p>
+<p>that satisfies:</p>
+<ol>
+<li>The empty set has measure zero: $\mu(\emptyset) = 0$</li>
+<li>Countable additivity: If $A_1, A_2, \dots$ are disjoint measurable sets, then:</li>
+</ol>
+<p>$$
+\mu\left(\bigcup_{i=1}^{\infty} A_i\right) = \sum_{i=1}^{\infty} \mu(A_i).
+$$</p>
+<p>Intuitively, one measure is just length or area or volume, etc. It just shows how to &ldquo;measure&rdquo; the size of a set</p>
+<p>A measure is a <!-- raw HTML omitted -->probability measure<!-- raw HTML omitted --> if $\mu(\mathcal{A}) = 1$, ensuring that probabilities sum to one</p>
+<h3 id="the-radon-nikodym-derivative">The Radon-Nikodym Derivative<a hidden class="anchor" aria-hidden="true" href="#the-radon-nikodym-derivative">#</a></h3>
+<p>The Radon-Nikodym derivative generalizes the concept of probability densities. Given two measures $\mu$ and $\nu$, if $\mu$ is absolutely continuous with respect to $\nu$ (denoted $\mu \ll \nu$), there exists a function $f$ such that:</p>
+<p>$$
+\mu(A) = \int_A f d\nu
+$$</p>
+<p>for all measurable sets $A$. This function $f$ is called the Radon-Nikodym derivative, written as:</p>
+<p>$$
+\frac{d\mu}{d\nu}
+$$</p>
+<p>If you dont get it now, dont worry you will get it later. (I always dreamt of writing this sentence in a blog. Thank you, Andrew Ng senpai)</p>
+<h2 id="how-policies-can-be-viewed-as-probability-measures-rather-than-functions">How policies can be viewed as probability measures rather than functions<a hidden class="anchor" aria-hidden="true" href="#how-policies-can-be-viewed-as-probability-measures-rather-than-functions">#</a></h2>
+<p>A probability measure $\pi$ is a function that &ldquo;assigns probabilities&rdquo; to subsets of the action space. Instead of defining a density function $\pi(a | s)$, we define $\pi$ as a probability measure (be cautious as I use the same notation for both the policy and the probability measure):</p>
+<p>$$
+\pi(s, A) = \int_A \pi(s, da)
+$$</p>
+<p>where:</p>
+<ul>
+<li>$A$ is a measurable subset of the action space $\mathcal{A}$</li>
+<li>$\pi(s, A)$ represents the probability of selecting an action within $A$ given state $s$</li>
+</ul>
+<p>I can already sense a question: &ldquo;Why the hell are you doing this? What is the benefit of this?&rdquo;</p>
+<p>Well, as we have discussed previously, this is to generalize the policy and its gradients beyond density. We will use it later to reformulate the policy gradient theorem in a more general way. (but overall I get that this blog feels like an overkill to an understanding, but in general its just a way to generalize the mathematical view)</p>
+<p>We will also note about Markov kernel, which is also related to the policy, as a matter of fact, policy is a Markov kernel:</p>
+<p>$$
+\pi: S \times \mathcal{F}(\mathcal{A}) \to [0,1]
+$$</p>
+<p>where:</p>
+<ul>
+<li>$S$ is the state space.</li>
+<li>$\mathcal{F}(\mathcal{A})$ is the $\sigma$-algebra over the action space.</li>
+<li>$\pi(s, A)$ gives the probability of selecting an action in $A$ given state $s$</li>
+</ul>
+<p>Why? Just to list all the properties of the policy in a more rigorous (I know how much math guys love this word) way.</p>
+<h2 id="the-concept-of-occupancy-measures-which-describe-how-policies-interact-with-the-environment">The concept of occupancy measures, which describe how policies interact with the environment<a hidden class="anchor" aria-hidden="true" href="#the-concept-of-occupancy-measures-which-describe-how-policies-interact-with-the-environment">#</a></h2>
+<p>In RL, especially in policy gradients, we frequently encounter formulation of a trajectory (well because we actually need to converge to an optimal policy). Instead of tracking individual trajectories, we often need a global measure of how often a policy visits different state-action pairs, this can be as expressive as just a bunch of collected trajectories. This is where occupancy measures come in</p>
+<p>An occupancy measure provides a probability distribution over state-action pairs under a given policy. Instead of working with sampled transitions, we define a stationary distribution that captures long-term visitation frequencies. This concept allows us to reformulate quite a lot of objectives in RL in a more general way using not some Monte Carlo sampled trajectories, but some precise visitation frequencies</p>
+<h1 id="policy-gradients-via-the-radon-nikodym-derivative">Policy Gradients via the Radon-Nikodym Derivative<a hidden class="anchor" aria-hidden="true" href="#policy-gradients-via-the-radon-nikodym-derivative">#</a></h1>
+<h2 id="derivation-of-policy-gradients-using-the-radon-nikodym-derivative">Derivation of policy gradients using the Radon-Nikodym derivative<a hidden class="anchor" aria-hidden="true" href="#derivation-of-policy-gradients-using-the-radon-nikodym-derivative">#</a></h2>
+<p>We will start with a recap of the policy gradient theorem, as it is the foundation of the policy gradient methods.</p>
+<p>The goal in RL is to maximize the expected return:</p>
+
+
+$$
+J(\theta) = \mathbb{E}_{\tau \sim \pi_{\theta}} [R(\tau)]
+$$
+
+
+<p>where:</p>
+<ul>
+<li>$\tau = (s_0, a_0, s_1, a_1, \dots)$ is a trajectory</li>
+<li>$R(\tau)$ is the return (e.g. cumulative (discounted or not) reward)</li>
+<li>$\pi_\theta$ is the policy parameterized by $\theta$</li>
+</ul>
+<p>Using the gradient of an expectation, we try to find the gradient of the objective:</p>
+
+
+$$
+\nabla_\theta J(\theta) = \nabla_\theta \mathbb{E}_{\tau \sim \pi_{\theta}} [R(\tau)]
+$$
+
+
+<p>from where we can derive the gradient of the objective:</p>
+
+
+$$
+\nabla_\theta J(\theta) = \int \nabla_\theta p_\theta(\tau) R(\tau) d\tau.
+$$
+
+
+<p>where $p_\theta(\tau)$ is the probability density of trajectory $\tau$ under the policy $\pi_\theta$ obviously</p>
+<p>Now we use the identity, which is just a log derivative:</p>
+
+
+$$
+\nabla_\theta p_\theta(\tau) = p_\theta(\tau) \nabla_\theta \log p_\theta(\tau),
+$$
+
+
+<p>which gives:</p>
+
+
+$$
+\nabla_\theta J(\theta) = \int p_\theta(\tau) \nabla_\theta \log p_\theta(\tau) R(\tau) d\tau.
+$$
+
+
+<p>Rewriting as an expectation:</p>
+
+
+$$
+\nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim \pi_{\theta}} \left[ \nabla_\theta \log p_\theta(\tau) R(\tau) \right].
+$$
+
+
+<p>This is the classic policy gradient theorem, then we can rewrite simple $p_\theta(\tau)$ with policy and thats basically it</p>
+<h3 id="so-what-for-do-we-need-radon-nikodym-derivative">So what for do we need Radon-Nikodym derivative?<a hidden class="anchor" aria-hidden="true" href="#so-what-for-do-we-need-radon-nikodym-derivative">#</a></h3>
+<p>Well, we missed it. Lets CIRCLE BACK to log derivative trick and see something new there</p>
+<p>The log-derivative trick:</p>
+
+
+$$
+\nabla_\theta p_\theta(\tau) = p_\theta(\tau) \nabla_\theta \log p_\theta(\tau)
+$$
+
+
+<p>In fact, it can be seen as a special case of the Radon-Nikodym derivative when considering an infinitesimally small perturbation of $\theta$ (remember we are trying to change the policy from some base $\theta_0$ to some optimal $\theta{\prime}$). Essentially, the policy gradient theorem can be thought of as an application of the Radon-Nikodym derivative, where instead of changing the entire measure, we take the derivative of the density function directly, but first some preliminary.</p>
+<p>This is why the policy gradient theorem can be rewritten as:</p>
+
+
+$$
+\nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim \mathbb{P}_\theta} \left[ \nabla_\theta \log \frac{d\mathbb{P}_\theta}{d\mathbb{P}_{\theta{\prime}}} R(\tau) \right]
+$$
+
+
+<p>I know that this feels out of the blue, but lets just recap quickly the intuition of Radon-Nikodym derivative:</p>
+<p>It shows us how one measure (in our case $\mathbb{P}\theta$) changes with respect to another measure (in our case $\mathbb{P}{\theta{\prime}}$), (sorry for notation, I somehow cannot fix MathJax here and ChatGPT cant help either, but you understand its underscript). Formally it looks something like this:</p>
+
+
+$$
+d\mathbb{P}_\theta = p(\tau) d\mathbb{P}_{\theta{\prime}}(\tau)
+$$
+
+
+<p>Looks better now? I guess, so! but still what it means and why? Now what? Now, that we now that it is just a special case of Radon-Nikodym theorem we can retract the assumptions under which it works (hint: it works only with infinitesmall change of $\theta$ - differential), but are we on practice having this infinitesmall changes? The answer is NO! that is why <del>my glorious and precious king</del>Schulman et al. and Sham Kakade (and other guys not to be offensive) invented upgrades to Policy Gradients such as TRPO (go where its infinitesmall enough), Natural Gradients, and so on. Even if we look at modern PPO clipped objective we can see that it resembles our Radon-Nikodyme derivative quite closely.</p>
+<p>OK, enough with yapping, but we still can arrive back at our policy gradient using just the assumption and we are back at it:</p>
+
+
+$$
+\nabla_\theta J(\theta) = \mathbb{E}{\tau \sim \pi{\theta}} \left[ \nabla_\theta \log p_\theta(\tau) R(\tau) \right]
+$$
+
+
+<h2 id="occupancy-measures-to-the-fight">Occupancy measures to the fight!<a hidden class="anchor" aria-hidden="true" href="#occupancy-measures-to-the-fight">#</a></h2>
+<p>Instead of reasoning directly over trajectory distributions  $p_\theta(\tau)$, we can shift our perspective to state-action occupancy measures (yes, the ones introduced before). Lets write it formally:</p>
+
+
+$$
+d^\pi(s, a) = \sum_{t=0}^{\infty} \gamma^t P(s_t=s, a_t=a | \pi)
+$$
+
+
+<p>where $P(s_t=s, a_t=a | \pi)$  is the probability of visiting  $(s, a)$  at time $t$ under policy $\pi$. This occupancy measure defines a stationary distribution over state-action pairs (yeah, as always). Since we are now working only with occupancy measures, we will try to drop in the replacement in our policy gradient theorem:</p>
+<p>First, we will unroll what is $p_\theta(\tau)$ actually is:</p>
+
+$$
+p_\theta(\tau) = p(s_0) \prod_{t=0}^{T} \pi_\theta(a_t | s_t) P(s_{t+1} | s_t, a_t)
+$$
+
+<p>By doing this, we can actually find this relation to be true:</p>
+
+$$
+\mathbb{E}_{\tau \sim p\theta} \left[ \sum_{t=0}^{T} f(s_t, a_t) \right] = \sum_{t=0}^{T} \sum_{s, a} P(s_t = s, a_t = a | \pi) f(s, a) = \sum_{s, a} d^\pi(s, a) f(s, a)
+$$
+
+<p>You probably are asking now, why sums over $f(s_t, a_t)$ well, that is because these are our sampled trajectories, we just unrolled them</p>
+<h1 id="policy-optimization-and-convex-analysis">Policy Optimization and Convex Analysis<a hidden class="anchor" aria-hidden="true" href="#policy-optimization-and-convex-analysis">#</a></h1>
+<p>Now that we have discovered (and used!) some of the <del>most brutal and vicious and most ruthless</del> more broad formalism, we can actually broaden up other things in RL right?</p>
+<h2 id="reformulating-rl-objectives-using-integrals-over-measures">Reformulating RL Objectives Using Integrals Over Measures<a hidden class="anchor" aria-hidden="true" href="#reformulating-rl-objectives-using-integrals-over-measures">#</a></h2>
+<p>The standard RL objective is <del>get the most bitches</del> get the most discounted cumulative reward (return):</p>
+
+$$
+J(\pi) = \mathbb{E} \left[ \sum_{t=0}^{\infty} \gamma^t r(s_t, a_t) \right]
+$$
+
+<p>Instead of summing over trajectories, we rewrite it using occupancy measures:</p>
+
+$$
+J(\pi) = \int_{\mathcal{S} \times \mathcal{A}} d^\pi(s, a) r(s, a)
+$$
+
+<p>see, its easy? If we read this integral in a natural way we would say &ldquo;sum up all the occupied state-action pairs weighted by the reward of state-action&rdquo;</p>
+<p>This is important for many things:</p>
+<ul>
+<li>This allows for us to use some variational magic here (hello bayesian RL)</li>
+<li>occupancy measure is guaranteed that it is consistent with Markov transition dynamics</li>
+<li>RL becomes just a convex optimization linear program problem (only tabular ofc, but still something!)</li>
+</ul>
+<h2 id="why-is-convexity-useful">Why Is Convexity Useful?<a hidden class="anchor" aria-hidden="true" href="#why-is-convexity-useful">#</a></h2>
+<p>As mentioned before, RL can just become a convex optimization problem which eliminates a lot of troubles. Lets take an example here:</p>
+<p>Instead of optimizing over a non-convex space of policies $\pi$, we optimize over the convex set of occupancy measures:</p>
+
+$$
+\max_{d^\pi} \int_{\mathcal{S} \times \mathcal{A}} d^\pi(s, a) r(s, a)
+$$
+
+<p>Of course with respect to:</p>
+<ol>
+<li>Stationarity - other way round occupancy measure breaks</li>
+<li>Normalization - other way round probability breaks</li>
+</ol>
+<p>and this opens a brand new world for gradient methods and we can just optimize over measures, it is explicitly used in TRPO written by <del>my glorious king</del> Schulman et al.</p>
+<h2 id="regularization-and-kl">Regularization and KL<a hidden class="anchor" aria-hidden="true" href="#regularization-and-kl">#</a></h2>
+<p>Regularization in measure theoretic interpretation becomes way more justified and even kinda intuitive rather then just a pure hack. We will cover a case of KL divergence as it is frequently used as a REGULARIZER in RL</p>
+
+
+$$
+D_{\text{KL}}(\pi || \pi_0) = \int_{\mathcal{S} \times \mathcal{A}} d^\pi(s, a) \log \frac{d^\pi(s, a)}{d^{\pi_0}(s, a)}
+$$
+
+
+<p>(dont worry this is just KL written in our already familiar terms)</p>
+<p>What we are doing here? a lot of things actually:</p>
+<ul>
+<li>we balance explore-exploit problem - by addressing closeness to prior policy</li>
+<li>we encourage smooth updates - by preventing HUGE steps in divergence</li>
+<li><del>we encourage capitalism</del> We dont</li>
+</ul>
+<h1 id="conclusion">Conclusion<a hidden class="anchor" aria-hidden="true" href="#conclusion">#</a></h1>
+<p>Through a measure-theoretic perspective, we have uncovered a broader and more principled way to understand policy gradients, moving beyond the limitations of density-based formulations. By viewing policies as probability measures and leveraging tools like the Radon-Nikodym derivative, we gain a more flexible framework that naturally extends to cases where densities may not be well-defined. (yeah it was written by ChatGPT)</p>
+<p>By actually examining how Radon-Nikodym derivative and occupancy measures are used we can leverage more INSIGHTS into interesting directions in RL. We can see RL from another angle. <del>Our skin becomes clearer</del>. We actually can gain theoretical information on why something works and something is not without just relying on set of hacks (its just beautiful, but I still am dumb enough to actually derive it)</p>
+<p>In essence, measure-theoretic RL is not just a mathematical abstraction — it has direct practical implications, that already influenced algorithm design (as examples we have taken TRPO, natural gradients and KL-regularized methods) and improving stability in policy optimization. By <del>ascending</del> stepping beyond conventional probability densities, we allow ourselves to see reinforcement learning through a different lens — one that may ultimately lead to more robust, <del>efficient,</del> (yeah calculate hessian or fisher matrix, I will wait) and theoretically grounded methods</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://myxik.github.io/posts/reasonable-effectiveness-tr/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Reasonable effectiveness of Trust Regions</span>
+  </a>
+</nav>
+
+
+<ul class="share-buttons">
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Measure-Theoretic View of Policy Gradients on x"
+            href="https://x.com/intent/tweet/?text=Measure-Theoretic%20View%20of%20Policy%20Gradients&amp;url=https%3a%2f%2fmyxik.github.io%2fposts%2fmeasure-theoretic-view%2f&amp;hashtags=">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M512 62.554 L 512 449.446 C 512 483.97 483.97 512 449.446 512 L 62.554 512 C 28.03 512 0 483.97 0 449.446 L 0 62.554 C 0 28.03 28.029 0 62.554 0 L 449.446 0 C 483.971 0 512 28.03 512 62.554 Z M 269.951 190.75 L 182.567 75.216 L 56 75.216 L 207.216 272.95 L 63.9 436.783 L 125.266 436.783 L 235.9 310.383 L 332.567 436.783 L 456 436.783 L 298.367 228.367 L 432.367 75.216 L 371.033 75.216 Z M 127.633 110 L 164.101 110 L 383.481 400.065 L 349.5 400.065 Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Measure-Theoretic View of Policy Gradients on telegram"
+            href="https://telegram.me/share/url?text=Measure-Theoretic%20View%20of%20Policy%20Gradients&amp;url=https%3a%2f%2fmyxik.github.io%2fposts%2fmeasure-theoretic-view%2f">
+            <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+            </svg>
+        </a>
+    </li>
+</ul>
+
+  </footer>
+</article>
+    </main>
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        }
+    };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</body>
+
+</html>
